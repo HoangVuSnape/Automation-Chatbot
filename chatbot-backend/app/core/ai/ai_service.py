@@ -11,6 +11,22 @@ from langchain_core.messages import AIMessageChunk
 from langchain.callbacks.base import BaseCallbackHandler
 from .tools import ProductSearchTool, CreateOrderTool, UpdateOrderStatusTool
 
+from google.oauth2 import service_account
+from langchain_google_vertexai import ChatVertexAI
+from langchain.tools import tool
+from langchain.agents import AgentExecutor, create_openai_functions_agent
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, PromptTemplate
+
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)  # Chỉ tắt FutureWarning
+warnings.filterwarnings("ignore")  # Tắt tất cả cảnh báo
+
+
+
+# === 1. Setup Vertex AI with credentials ===
+credentials_path = "E:/LLM_clone/credentials/tdtuchat-16614553b756.json"
+credentials = service_account.Credentials.from_service_account_file(credentials_path)
+
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -84,11 +100,20 @@ Example flow:
      total_amount=31990000  # price × quantity
    - Inform customer of the result"""
     
-    chat = ChatOpenAI(
-        temperature=0, 
+    # chat = ChatOpenAI(
+    #     temperature=0, 
+    #     streaming=True, 
+    #     model="gpt-4", 
+    #     api_key=OPENAI_API_KEY,
+    #     callbacks=[CustomHandler()]
+    # )
+    
+    chat = ChatVertexAI(
+        model="gemini-1.5-pro",
+        temperature=0.6,
         streaming=True, 
-        model="gpt-4", 
-        api_key=OPENAI_API_KEY,
+        max_tokens=200,
+        credentials=credentials,
         callbacks=[CustomHandler()]
     )
     

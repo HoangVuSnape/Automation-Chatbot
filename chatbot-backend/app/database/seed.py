@@ -1,3 +1,10 @@
+import sys
+import os
+
+# Thêm thư mục gốc (chatbot-backend) vào sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
+
 from typing import List, Dict
 from app.database.chat_history_service import get_db_connection
 import json
